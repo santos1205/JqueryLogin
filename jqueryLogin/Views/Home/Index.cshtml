@@ -7,37 +7,64 @@
     <h1>Login</h1>
     <br />
     <h4><span id="spuser" style="color:blue"></span></h4>
-    <div class="col-md-4">
-        <h2>User</h2>
-        <input type="text" id="user" />
+    <div id="dvLogin">
+        <div class="col-md-4">
+            <h2>User</h2>
+            <input type="text" id="user" />
+        </div>
+        <div class="col-md-4">
+            <h2>Senha</h2>
+            <input type="password" id="senha" />
+        </div>
+        <br /><br /><br /><br /><br /><br />
+        <div class="col-md-4">
+            <input type="button" id="btnEntrar" value="Entrar" />
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Senha</h2>
-        <input type="password" id="senha" />
-    </div>
-    <br /><br /><br /><br /><br /><br />
-    <div class="col-md-4">
-        <input type="button" id="btnEntrar" value="Entrar" />
-    </div>
+</div>
+    
     <script>
         $(document).ready(function () {
-            //$('#spuser').html('Logado como mário santos');
-            var body = {
-                grant_type: 'password',
-                username: $('#user').val(),
-                password: $('#senha').val()
-            };
+            transaction();
 
             $('#btnEntrar').click(function () {
+                var body = {
+                    grant_type: 'password',
+                    username: $('#user').val(),
+                    password: $('#senha').val()
+                };
+
                 $.ajax({
                     url: 'http://localhost:60088/token',
                     type: 'post',
                     dataType: 'json',
                     crossDomain: true,
                     data: body,
-                }).done(function (data) {
-
+                    error: function(request, status, error) {                        
+                        $('#spuser').html(request.responseJSON.error_description);
+                    }
+                }).done(function (data) {                    
+                    localStorage.setItem('jtoken', data.access_token);
+                    transaction();
                 });
             })
+
+            function transaction() {
+                var token = localStorage.getItem('jtoken');
+                $.ajax({
+                    url: 'http://localhost:60088/api/values',
+                    type: 'get',
+                    contentType: 'application/json',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    error: function (request, status, error) {
+                        $('#dvLogin').show();
+                    }
+                }).done(function (data) {                    
+                    $('#dvLogin').hide();
+                    $('#spuser').html('Bem vindo ' + data);            
+                });
+            }
         });
     </script>
