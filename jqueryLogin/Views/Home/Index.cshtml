@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+
+<div class="row">
+    <h1>Login</h1>
+    <br />
+    <h4><span id="spuser" style="color:blue"></span></h4>
+    <div class="col-md-4">
+        <h2>User</h2>
+        <input type="text" id="user" />
+    </div>
+    <div class="col-md-4">
+        <h2>Senha</h2>
+        <input type="password" id="senha" />
+    </div>
+    <br /><br /><br /><br /><br /><br />
+    <div class="col-md-4">
+        <input type="button" id="btnEntrar" value="Entrar" />
+    </div>
+    <script>
+        $(document).ready(function () {
+            //$('#spuser').html('Logado como mário santos');
+            var body = {
+                grant_type: 'password',
+                username: $('#user').val(),
+                password: $('#senha').val()
+            };
+
+            $('#btnEntrar').click(function () {
+                $.ajax({
+                    url: 'http://localhost:60088/token',
+                    type: 'post',
+                    dataType: 'json',
+                    crossDomain: true,
+                    data: body,
+                }).done(function (data) {
+
+                });
+            })
+        });
+    </script>
