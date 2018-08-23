@@ -5,8 +5,11 @@
 
 <div class="row">
     <h1>Login</h1>
-    <br />
+    <br />    
     <h4><span id="spuser" style="color:blue"></span></h4>
+    <div>
+        <input type="button" id="btnLogout" style="display:none" value="Logout" />
+    </div>
     <div id="dvLogin">
         <div class="col-md-4">
             <h2>User</h2>
@@ -27,6 +30,12 @@
         $(document).ready(function () {
             transaction();
 
+            $('#btnLogout').click(function () {
+                localStorage.setItem('jtoken', '');
+                transaction();
+            });
+
+
             $('#btnEntrar').click(function () {
                 var body = {
                     grant_type: 'password',
@@ -41,7 +50,7 @@
                     crossDomain: true,
                     data: body,
                     error: function(request, status, error) {                        
-                        $('#spuser').html(request.responseJSON.error_description);
+                        $('#spuser').html(request.responseJSON.error_description);                        
                     }
                 }).done(function (data) {                    
                     localStorage.setItem('jtoken', data.access_token);
@@ -59,10 +68,15 @@
                         'Authorization': 'Bearer ' + token
                     },
                     error: function (request, status, error) {
+                        $('#user').val('');
+                        $('#senha').val('');
                         $('#dvLogin').show();
+                        $('#spuser').html('');            
+                        $('#btnLogout').hide();
                     }
                 }).done(function (data) {                    
                     $('#dvLogin').hide();
+                    $('#btnLogout').show();
                     $('#spuser').html('Bem vindo ' + data);            
                 });
             }
